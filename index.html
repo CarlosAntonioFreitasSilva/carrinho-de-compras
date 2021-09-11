@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .produtos{
+            cursor: pointer;
+        }
+        .container{
+            width: 200px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="produtos"> 
+            <h1>Produtos</h1>  
+            <div id="banana">
+                <p>Banana</p>
+                <button onclick="diminuir(event)">-</button>
+                <input onchange="atualizarCarrinho(event)" type="number" min="0" max="15.4" maxlength="4">
+                <button onclick="aumentar(event)">+</button>
+            </div>
+            <div id="laranja">
+                <p>Laranja</p>
+                <button onclick="diminuir(event)">-</button>
+                <input onchange="atualizarCarrinho(event)" type="number" min="0" max="15.4" maxlength="4">
+                <button onclick="aumentar(event)">+</button>
+            </div>
+            <div id="maca">
+                <p>Maçã</p>
+                <button onclick="diminuir(event)">-</button>
+                <input onchange="atualizarCarrinho(event)" type="number" min="0" max="15.4" maxlength="4">
+                <button onclick="aumentar(event)">+</button>
+            </div>
+        </div>
+        <h1>Carrinho</h1>
+        <div id="carrinho">
+
+            
+        </div>
+        <div id="esvaziar">
+            
+        </div>
+        
+
+    </div>
+    <script>
+        var carrinho =[]
+
+        function incluir(item,qtd){
+            carrinho.push({produto:item, quantidade: qtd})
+        }
+
+        function excluir(item){
+            var indice 
+            for(var i = 0; i<carrinho.length; i++){ // descobrir a posição do item no array
+                    if(carrinho[i].produto==item){
+                        indice = i
+                    }
+                }
+                document.getElementById('esvaziar').innerHTML=""
+                console.log(indice)
+                carrinho.splice(indice,1)
+        }
+
+        function atualizarCarrinho(event){
+            var elemento = event.target.parentNode; //retorna o elemento pai
+            var item = elemento.getAttribute('id'); //retorna o nome do item
+            var qtd = event.target.value;
+            if(qtd==0){
+                excluir(item)
+            }else if(carrinho.some( i=> i.produto===item)){
+                for(var i = 0; i<carrinho.length; i++){
+                    if(carrinho[i].produto==item){
+                        carrinho[i].quantidade = qtd
+                    }
+                }
+            }else{
+                incluir(item,qtd)
+            }
+            verCarrinho()
+            document.getElementById('esvaziar').innerHTML='<button onclick="limparCarrinho()">Esvaziar carrinho</button>'
+
+        }
+
+        function diminuir(event){
+            var elemento = event.target.parentNode;
+            var item = elemento.getAttribute('id');
+            var campo = elemento.children[2]; //seleciona o campo de input que é o terceiro filho
+            var qtd = campo.value-1
+            campo.stepDown(1)
+            
+            if(qtd==0){
+               excluir(item)
+            document.getElementById('esvaziar').innerHTML=''
+
+            }else if(qtd>0){
+                if(carrinho.some( i=> i.produto===item)){
+                    for(var i = 0; i<carrinho.length; i++){
+                        if(carrinho[i].produto==item){
+                            carrinho[i].quantidade = campo.value
+                        }
+                    }
+                }else{
+                    incluir(item,campo.value)
+                }
+
+                document.getElementById('esvaziar').innerHTML='<button onclick="limparCarrinho()">Esvaziar carrinho</button>'
+
+            }
+            verCarrinho()
+        }
+
+        function aumentar(event){
+            var elemento = event.target.parentNode;
+            var campo = elemento.childNodes[5];
+            var item = elemento.getAttribute('id');
+            campo.stepUp(1)
+
+            if(carrinho.some( i=> i.produto===item)){
+                for(var i = 0; i<carrinho.length; i++){
+                    if(carrinho[i].produto==item){
+                        carrinho[i].quantidade = campo.value
+                    }
+                }
+            }else{
+                incluir(item,campo.value)
+            }
+
+            verCarrinho()
+            document.getElementById('esvaziar').innerHTML='<button onclick="limparCarrinho()">Esvaziar carrinho</button>'
+
+        }
+
+        // function verCarrinho(){
+        //     if(carrinho.length==0){
+        //     console.log("Seu carrinho está vazio");
+        //     }else{
+        //         console.log("Seu carrinho tem "+carrinho.length+" item");
+        //         console.log(carrinho)
+        //     }
+        // }
+
+        function verCarrinho(){
+            text = ""
+            if(carrinho.length==0){
+                document.getElementById('carrinho').innerHTML="Seu carrinho está vazio"
+            }else{
+                
+                for(var i=0; i<carrinho.length; i++){
+                    text+= carrinho[i].quantidade + "x  " + carrinho[i].produto + "<br>"
+                   
+                }
+                document.getElementById('carrinho').innerHTML = text
+            }
+            console.log(carrinho)
+
+        }
+        
+        function limparCarrinho(){
+            carrinho = []
+            document.getElementById('carrinho').innerHTML="Seu carrinho está vazio"
+            document.getElementById('esvaziar').innerHTML=''
+            var inputs = document.getElementsByTagName('input')
+
+            for(var i=0; i<inputs.length;i++){
+                inputs[i].value=''
+            }
+            console.log(carrinho)
+        }
+    </script>
+</body>
+</html>
